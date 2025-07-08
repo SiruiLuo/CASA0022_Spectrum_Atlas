@@ -4,6 +4,15 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QThread>
+#include <QFile>         // ✚
+#include <QTextStream>   // ✚
+
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <string>
+#include <sstream>
+#include <unistd.h>
 
 /* ---------------- 构造 ---------------- */
 MainWindow::MainWindow(QWidget *parent)
@@ -21,6 +30,18 @@ MainWindow::MainWindow(QWidget *parent)
     /* RSSI */
     rssiTimer_.setInterval(3000);
     connect(&rssiTimer_, &QTimer::timeout, this, &MainWindow::queryRssi);
+
+    /* ✚ 扫描状态文件轮询  */
+    loggerTimer_.setInterval(3000);          // 3 s
+    connect(&loggerTimer_, &QTimer::timeout, this, [this]{
+        QFile f("/home/Steven/Spectrum_Atlas_GUI2/logger_status.txt");
+        if (f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            const QString s = QTextStream(&f).readAll().trimmed();
+            ui->loggerStatusLabel->setText(s.isEmpty() ? "扫描状态：--" :
+                                                     "扫描状态：" + s);
+        }
+    });
+    loggerTimer_.start();
 
     ui->mapLabel->setText(tr("等待地图…"));
     ui->mapLabel->setScaledContents(true);
@@ -58,7 +79,7 @@ void MainWindow::on_startButton_clicked()
         "roslaunch ldlidar_stl_ros ld19.launch";
     ldProc_->start("/bin/bash", {"-c", ldCmd});
 
-    /* ③ Hector SLAM (+ RViz) */
+    /* ③ Hector SLAM */
     hectorProc_ = new QProcess(this);
     const QString hectorCmd =
         "source /opt/ros/melodic/setup.bash && "
@@ -66,6 +87,11 @@ void MainWindow::on_startButton_clicked()
         "source devel/setup.bash && "
         "roslaunch hector_slam_launch tutorial.launch";
     hectorProc_->start("/bin/bash", {"-c", hectorCmd});
+
+    /* ④ RTL-SDR 记录脚本 —— 新增 */
+    loggerProc_ = new QProcess(this);
+    loggerProc_->start("/bin/bash",
+                       {"-c", "python3 /home/Steven/Spectrum_Atlas_GUI2/ros_sdr_logger.py"});
 
     rssiTimer_.start();
     startMapSubscriber();
@@ -85,7 +111,6 @@ void MainWindow::startMapSubscriber()
     mapSub_ = nh_.subscribe("map", 1, &MainWindow::onMap, this);
 }
 
-/* ---------- 关闭 /map 订阅 ---------- */
 void MainWindow::stopMapSubscriber()
 {
     mapSub_.shutdown();
@@ -94,80 +119,56 @@ void MainWindow::stopMapSubscriber()
 /* ---------- OccupancyGrid → QImage （裁剪+调色） ---------- */
 void MainWindow::onMap(const nav_msgs::OccupancyGridConstPtr& msg)
 {
-    const int W = msg->info.width;
-    const int H = msg->info.height;
-    if (W == 0 || H == 0) return;
+    const int W = msg->info.width, H = msg->info.height;
+    if (!W || !H) return;
 
-    /* 1. 统计已知格包围盒 */
     int minX=W, minY=H, maxX=-1, maxY=-1;
     const auto &src = msg->data;
-
     for (int y=0; y<H; ++y) {
         const int8_t *row = &src[y*W];
         for (int x=0; x<W; ++x) {
             int8_t v = row[x];
-            if (v >= 0) {                   // 已知
-                minX = std::min(minX, x);
-                maxX = std::max(maxX, x);
-                minY = std::min(minY, y);
-                maxY = std::max(maxY, y);
-            }
+            if (v >= 0) { minX=std::min(minX,x); maxX=std::max(maxX,x);
+                          minY=std::min(minY,y); maxY=std::max(maxY,y); }
         }
     }
-    if (maxX < 0) return;                  // 还没有任何已知像素
-
-    /* 边框 padding */
+    if (maxX < 0) return;
     const int pad = 5;
-    minX = std::max(0,     minX - pad);
-    minY = std::max(0,     minY - pad);
-    maxX = std::min(W-1,   maxX + pad);
-    maxY = std::min(H-1,   maxY + pad);
+    minX = std::max(0, minX-pad); minY = std::max(0, minY-pad);
+    maxX = std::min(W-1, maxX+pad); maxY = std::min(H-1, maxY+pad);
 
-    const int roiW = maxX - minX + 1;
-    const int roiH = maxY - minY + 1;
-
-    /* 2. 整幅 QImage */
     QImage full(W, H, QImage::Format_Indexed8);
-    QVector<QRgb> palette(256, qRgb(0,0,0));
-    palette[254] = qRgb(255,255,255);      // 空闲
-    palette[205] = qRgb(160,160,160);      // 未知
-    full.setColorTable(palette);
+    QVector<QRgb> pal(256, qRgb(0,0,0));
+    pal[254] = qRgb(255,255,255); pal[205] = qRgb(160,160,160);
+    full.setColorTable(pal);
 
     for (int y=0; y<H; ++y) {
-        uchar *dst = full.scanLine(H-1-y); // y 翻转
+        uchar *dst = full.scanLine(H-1-y);
         const int8_t *row = &src[y*W];
         for (int x=0; x<W; ++x) {
             int8_t v = row[x];
-            dst[x] = (v < 0) ? 205 : (v == 0 ? 254 : 0);
+            dst[x] = (v < 0) ? 205 : (v==0 ? 254 : 0);
         }
     }
+    rawMap_ = full.copy(minX, H-1-maxY, maxX-minX+1, maxY-minY+1);
 
-    /* 3. 裁剪 ROI 并保存为 rawMap_ */
-    rawMap_ = full.copy(minX, H-1-maxY, roiW, roiH);  // y 翻转补偿
-
-    /* 4. 按当前 label 尺寸缩放并显示 */
     QPixmap pix = QPixmap::fromImage(
         rawMap_.scaled(ui->mapLabel->size(),
-                       Qt::KeepAspectRatio,
-                       Qt::FastTransformation));
+                       Qt::KeepAspectRatio, Qt::FastTransformation));
     ui->mapLabel->setPixmap(pix);
 }
 
-/* ---------- 窗口尺寸变化时重新缩放 ---------- */
-void MainWindow::resizeEvent(QResizeEvent *event)
+void MainWindow::resizeEvent(QResizeEvent*)
 {
-    Q_UNUSED(event);
-    if (!rawMap_.isNull())
-    {
+    if (!rawMap_.isNull()) {
         QPixmap pix = QPixmap::fromImage(
             rawMap_.scaled(ui->mapLabel->size(),
-                           Qt::KeepAspectRatio,
-                           Qt::FastTransformation));
+                           Qt::KeepAspectRatio, Qt::FastTransformation));
         ui->mapLabel->setPixmap(pix);
     }
 }
 
-/* ---------- 统一结束子进程 ---------- */
+/* ---------- 统一结束子进程（含 loggerProc_） ---------- */
 void MainWindow::killProcesses()
 {
     auto safeKill = [](QProcess *&p){
@@ -177,30 +178,31 @@ void MainWindow::killProcesses()
         delete p; p = nullptr;
     };
 
+    safeKill(loggerProc_);
     safeKill(hectorProc_);
     safeKill(ldProc_);
     safeKill(roscoreProc_);
     safeKill(rssiProc_);
 
     stopMapSubscriber();
-
     rssiTimer_.stop();
-    rawMap_ = QImage();                   // 清空
+    loggerTimer_.stop();                             // ✚ 新增
+    rawMap_ = QImage();
 
     ui->rssiLabel->setText("RSSI: -- dB");
+    ui->loggerStatusLabel->setText("扫描状态：--");  // ✚ 新增
     ui->mapLabel->setText(tr("等待地图…"));
 }
 
-/* ---------- 周期性读取 RSSI ---------- */
 void MainWindow::queryRssi()
 {
     if (rssiProc_) return;
     rssiProc_ = new QProcess(this);
 
     connect(rssiProc_,
-        static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>
-        (&QProcess::finished),
-        this,[this](int, QProcess::ExitStatus)
+            static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>
+            (&QProcess::finished),
+            this,[this](int, QProcess::ExitStatus)
     {
         const QString out = rssiProc_->readAllStandardOutput().trimmed();
         bool ok=false; double rssi = out.toDouble(&ok);
@@ -211,10 +213,9 @@ void MainWindow::queryRssi()
     });
 
     rssiProc_->start("/bin/bash",
-                     {"-c","python3 /home/pi/scripts/read_rssi.py"});
+                     {"-c","python3 /home/Steven/scripts/read_rssi.py"});
 }
 
-/* ---------- 托盘点击 ---------- */
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     if (reason == QSystemTrayIcon::Trigger) {
@@ -222,11 +223,11 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
-/* ---------- 关闭事件 ---------- */
 void MainWindow::closeEvent(QCloseEvent *e)
 {
     if (QMessageBox::question(this, tr("退出确认"),
-        tr("确定要退出并关闭所有 ROS 节点吗？")) == QMessageBox::Yes)
+                              tr("确定要退出并关闭所有 ROS 节点吗？"))
+        == QMessageBox::Yes)
     {
         killProcesses(); tray_.hide(); e->accept();
     } else e->ignore();
