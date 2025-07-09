@@ -20,20 +20,20 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
-    void resizeEvent(QResizeEvent *event) override;    // 保证窗口变化时同步缩放
+    void resizeEvent(QResizeEvent *event) override;
 
 private slots:
     void on_startButton_clicked();
     void on_stopButton_clicked();
-    void queryRssi();                              // 周期性读取 RSSI
+    void queryRssi();
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
-private:               /* ---------- 地图订阅与渲染 ---------- */
+private:                /* ---------- 地图订阅与渲染 ---------- */
     void startMapSubscriber();
     void stopMapSubscriber();
-    void onMap(const nav_msgs::OccupancyGridConstPtr& msg);   // 回调
+    void onMap(const nav_msgs::OccupancyGridConstPtr& msg);
 
-private:               /* ---------- 进程&UI ---------- */
+private:                /* ---------- 进程&UI ---------- */
     void killProcesses();
 
     Ui::MainWindow      *ui;
@@ -42,15 +42,17 @@ private:               /* ---------- 进程&UI ---------- */
     QProcess *ldProc_     {nullptr};
     QProcess *hectorProc_ {nullptr};
     QProcess *rssiProc_   {nullptr};
+    QProcess *loggerProc_ {nullptr};          // ✚ 新增：RTL-SDR 记录脚本
 
     QTimer     rssiTimer_;
+    QTimer     loggerTimer_;
     QSystemTrayIcon tray_;
 
     /* ROS */
     ros::NodeHandle nh_;
     ros::Subscriber mapSub_;
 
-    /* 最新一帧原始 QImage，用于 resizeEvent 里重复缩放 */
+    /* 最新一帧原始 QImage */
     QImage rawMap_;
 };
 

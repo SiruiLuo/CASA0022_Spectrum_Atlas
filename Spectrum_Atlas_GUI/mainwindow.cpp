@@ -4,8 +4,9 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QThread>
-#include <QFile>         // ✚
-#include <QTextStream>   // ✚
+#include <QFile>
+#include <QTextStream>
+#include <QDir>
 
 #include <cstdlib>
 #include <cstdio>
@@ -14,25 +15,34 @@
 #include <sstream>
 #include <unistd.h>
 
+/* --- 保存地图的默认路径 --- */
+const QString kSavedMapDir = "/home/Steven/maps";
+const QString kMapPgmPath = kSavedMapDir + "/map.pgm";
+const QString kMapYamlPath = kSavedMapDir + "/map.yaml";
+const QString kYamlTemplate = R"(image: map.pgm
+resolution: {res}
+origin: [{ox}, {oy}, 0.0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+)";
+
 /* ---------------- 构造 ---------------- */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    /* 托盘 */
     tray_.setIcon(QIcon::fromTheme("applications-graphics"));
     tray_.setToolTip(tr("ROS Mapping GUI"));
     tray_.show();
     connect(&tray_, &QSystemTrayIcon::activated,
             this, &MainWindow::iconActivated);
 
-    /* RSSI */
     rssiTimer_.setInterval(3000);
     connect(&rssiTimer_, &QTimer::timeout, this, &MainWindow::queryRssi);
 
-    /* ✚ 扫描状态文件轮询  */
-    loggerTimer_.setInterval(3000);          // 3 s
+    loggerTimer_.setInterval(3000);
     connect(&loggerTimer_, &QTimer::timeout, this, [this]{
         QFile f("/home/Steven/Spectrum_Atlas_GUI2/logger_status.txt");
         if (f.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -53,7 +63,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-/* ---------- 启动激光建图 ---------- */
 void MainWindow::on_startButton_clicked()
 {
     if (roscoreProc_) {
@@ -61,16 +70,14 @@ void MainWindow::on_startButton_clicked()
         return;
     }
 
-    /* ① roscore */
     roscoreProc_ = new QProcess(this);
     roscoreProc_->start("/bin/bash", {"-c", "roscore"});
     if (!roscoreProc_->waitForStarted(3000)) {
         QMessageBox::critical(this, tr("错误"), tr("无法启动 roscore！"));
         killProcesses(); return;
     }
-    QThread::sleep(2);                         // master 真正就绪
+    QThread::sleep(2);
 
-    /* ② ldlidar */
     ldProc_ = new QProcess(this);
     const QString ldCmd =
         "source /opt/ros/melodic/setup.bash && "
@@ -79,7 +86,6 @@ void MainWindow::on_startButton_clicked()
         "roslaunch ldlidar_stl_ros ld19.launch";
     ldProc_->start("/bin/bash", {"-c", ldCmd});
 
-    /* ③ Hector SLAM */
     hectorProc_ = new QProcess(this);
     const QString hectorCmd =
         "source /opt/ros/melodic/setup.bash && "
@@ -88,7 +94,6 @@ void MainWindow::on_startButton_clicked()
         "roslaunch hector_slam_launch tutorial.launch";
     hectorProc_->start("/bin/bash", {"-c", hectorCmd});
 
-    /* ④ RTL-SDR 记录脚本 —— 新增 */
     loggerProc_ = new QProcess(this);
     loggerProc_->start("/bin/bash",
                        {"-c", "python3 /home/Steven/Spectrum_Atlas_GUI2/ros_sdr_logger.py"});
@@ -97,14 +102,12 @@ void MainWindow::on_startButton_clicked()
     startMapSubscriber();
 }
 
-/* ---------- 停止并退出 ---------- */
 void MainWindow::on_stopButton_clicked()
 {
     killProcesses();
     close();
 }
 
-/* ---------- 建立 /map 订阅 ---------- */
 void MainWindow::startMapSubscriber()
 {
     if (mapSub_) return;
@@ -116,7 +119,6 @@ void MainWindow::stopMapSubscriber()
     mapSub_.shutdown();
 }
 
-/* ---------- OccupancyGrid → QImage （裁剪+调色） ---------- */
 void MainWindow::onMap(const nav_msgs::OccupancyGridConstPtr& msg)
 {
     const int W = msg->info.width, H = msg->info.height;
@@ -156,6 +158,26 @@ void MainWindow::onMap(const nav_msgs::OccupancyGridConstPtr& msg)
         rawMap_.scaled(ui->mapLabel->size(),
                        Qt::KeepAspectRatio, Qt::FastTransformation));
     ui->mapLabel->setPixmap(pix);
+
+    // ✚ 保存地图（.pgm 和 .yaml）
+    QDir().mkpath(kSavedMapDir);
+    rawMap_.save(kMapPgmPath, "PGM");
+
+    const auto& info = msg->info;
+    const double res = info.resolution;
+    const double ox = info.origin.position.x;
+    const double oy = info.origin.position.y;
+
+    QFile yamlFile(kMapYamlPath);
+    if (yamlFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&yamlFile);
+        QString yaml = kYamlTemplate;
+        yaml.replace("{res}", QString::number(res, 'f', 6));
+        yaml.replace("{ox}", QString::number(ox, 'f', 6));
+        yaml.replace("{oy}", QString::number(oy, 'f', 6));
+        out << yaml;
+        yamlFile.close();
+    }
 }
 
 void MainWindow::resizeEvent(QResizeEvent*)
@@ -168,7 +190,6 @@ void MainWindow::resizeEvent(QResizeEvent*)
     }
 }
 
-/* ---------- 统一结束子进程（含 loggerProc_） ---------- */
 void MainWindow::killProcesses()
 {
     auto safeKill = [](QProcess *&p){
@@ -186,11 +207,11 @@ void MainWindow::killProcesses()
 
     stopMapSubscriber();
     rssiTimer_.stop();
-    loggerTimer_.stop();                             // ✚ 新增
+    loggerTimer_.stop();
     rawMap_ = QImage();
 
     ui->rssiLabel->setText("RSSI: -- dB");
-    ui->loggerStatusLabel->setText("扫描状态：--");  // ✚ 新增
+    ui->loggerStatusLabel->setText("扫描状态：--");
     ui->mapLabel->setText(tr("等待地图…"));
 }
 
