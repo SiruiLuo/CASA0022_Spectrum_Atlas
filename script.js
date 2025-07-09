@@ -44,13 +44,99 @@ document.addEventListener('DOMContentLoaded', function() {
     // 热力图演示动画
     const heatmapGrid = document.querySelector('.heatmap-grid');
     if (heatmapGrid) {
+        // 清空现有内容
+        heatmapGrid.innerHTML = '';
+        
+        // 创建400个网格单元
         for (let i = 0; i < 400; i++) {
             const cell = document.createElement('div');
-            cell.style.background = `rgba(0, 0, 0, ${Math.random() * 0.3})`;
-            cell.style.animationDelay = `${Math.random() * 3}s`;
-            cell.style.animationDuration = `${2 + Math.random() * 2}s`;
+            cell.style.cssText = `
+                background: rgba(0, 0, 0, ${Math.random() * 0.3});
+                animation: heatmapCellPulse ${2 + Math.random() * 3}s infinite;
+                animation-delay: ${Math.random() * 2}s;
+                transition: all 0.3s ease;
+            `;
             heatmapGrid.appendChild(cell);
         }
+        
+        // 添加动态数据更新模拟
+        setInterval(() => {
+            const cells = heatmapGrid.querySelectorAll('div');
+            cells.forEach(cell => {
+                const newOpacity = Math.random() * 0.4;
+                const newColor = `rgba(0, 0, 0, ${newOpacity})`;
+                cell.style.background = newColor;
+            });
+        }, 2000);
+        
+        // 添加鼠标交互效果
+        heatmapGrid.addEventListener('mousemove', (e) => {
+            const rect = heatmapGrid.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const cells = heatmapGrid.querySelectorAll('div');
+            cells.forEach((cell, index) => {
+                const cellRect = cell.getBoundingClientRect();
+                const cellX = cellRect.left - rect.left + cellRect.width / 2;
+                const cellY = cellRect.top - rect.top + cellRect.height / 2;
+                
+                const distance = Math.sqrt((x - cellX) ** 2 + (y - cellY) ** 2);
+                const maxDistance = 100;
+                
+                if (distance < maxDistance) {
+                    const intensity = 1 - (distance / maxDistance);
+                    cell.style.background = `rgba(0, 0, 0, ${0.1 + intensity * 0.4})`;
+                    cell.style.transform = `scale(${1 + intensity * 0.1})`;
+                } else {
+                    cell.style.transform = 'scale(1)';
+                }
+            });
+        });
+        
+        // 鼠标离开时恢复
+        heatmapGrid.addEventListener('mouseleave', () => {
+            const cells = heatmapGrid.querySelectorAll('div');
+            cells.forEach(cell => {
+                cell.style.transform = 'scale(1)';
+            });
+        });
+        
+        // 点击热力图时的交互效果
+        heatmapGrid.addEventListener('click', (e) => {
+            const rect = heatmapGrid.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // 创建点击波纹效果
+            const ripple = document.createElement('div');
+            ripple.style.cssText = `
+                position: absolute;
+                left: ${x}px;
+                top: ${y}px;
+                width: 0;
+                height: 0;
+                border-radius: 50%;
+                background: rgba(102, 102, 102, 0.3);
+                transform: translate(-50%, -50%);
+                animation: rippleExpand 0.6s ease-out;
+                pointer-events: none;
+                z-index: 10;
+            `;
+            
+            heatmapGrid.appendChild(ripple);
+            
+            // 移除波纹元素
+            setTimeout(() => {
+                if (ripple.parentNode) {
+                    ripple.parentNode.removeChild(ripple);
+                }
+            }, 600);
+            
+            // 显示点击位置的数据强度
+            const intensity = Math.random() * 100;
+            showNotification(`Signal strength at this point: ${intensity.toFixed(1)} dBm`, 'info');
+        });
     }
     
     // 表单验证
@@ -338,4 +424,74 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // 实时数据统计更新
+    const statNumbers = document.querySelectorAll('.stat-number');
+    if (statNumbers.length > 0) {
+        // 处理速度主题列表
+        const processingThemes = [
+            'Instant',
+            'Live',
+            'Active',
+            'Dynamic',
+            'Fast',
+            'Quick',
+            'Rapid'
+        ];
+        
+        let themeIndex = 0;
+        
+        // 只更新Processing Speed，其他保持不变
+        setInterval(() => {
+            statNumbers.forEach((stat, index) => {
+                const currentText = stat.textContent;
+                
+                // 只更新第三个统计项（Processing Speed）
+                if (index === 2) {
+                    stat.textContent = processingThemes[themeIndex];
+                    themeIndex = (themeIndex + 1) % processingThemes.length;
+                }
+                // Data Accuracy (index 0) 和 Frequency Bands (index 1) 保持不变
+            });
+        }, 2000);
+        
+        // 添加数字变化动画
+        statNumbers.forEach(stat => {
+            stat.style.transition = 'all 0.5s ease';
+        });
+    }
+    
+    // 信号强度模拟
+    const signalWaves = document.querySelectorAll('.signal-wave');
+    if (signalWaves.length > 0) {
+        setInterval(() => {
+            signalWaves.forEach((wave, index) => {
+                const intensity = Math.random();
+                wave.style.borderColor = `rgba(102, 102, 102, ${intensity})`;
+                wave.style.animationDuration = `${1.5 + Math.random()}s`;
+            });
+        }, 1000);
+    }
+    
+    // 状态指示器动态更新
+    const statusDot = document.querySelector('.status-dot');
+    const statusText = document.querySelector('.status-text');
+    if (statusDot && statusText) {
+        const statuses = [
+            { text: 'System Active', color: '#4CAF50' },
+            { text: 'Collecting Data', color: '#2196F3' },
+            { text: 'Processing Signals', color: '#FF9800' },
+            { text: 'Generating Heatmap', color: '#9C27B0' }
+        ];
+        
+        let currentStatus = 0;
+        
+        setInterval(() => {
+            const status = statuses[currentStatus];
+            statusDot.style.background = status.color;
+            statusText.textContent = status.text;
+            
+            currentStatus = (currentStatus + 1) % statuses.length;
+        }, 3000);
+    }
 }); 
