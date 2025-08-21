@@ -217,6 +217,27 @@ All frequency band heatmaps generated from student dorm collection:
 
 </div>
 
+### BLE Signal Analysis Results
+**BLE RSSI Analysis Dashboard:**
+
+<div align="center">
+
+<img src="Images/BLE%20Dashboard.png" width="400" alt="BLE Dashboard">
+
+**Figure 15: BLE Signal Analysis Dashboard**
+
+</div>
+
+**BLE RSSI Variation Analysis:**
+
+<div align="center">
+
+<img src="Images/BLE%20RSSI%20total%20variation.png" width="400" alt="BLE RSSI Variation"> <img src="Images/BLE%20AVG%20Change.png" width="400" alt="BLE Average Change">
+
+**Figure 16: BLE RSSI Total Variation and Average Change Analysis**
+
+</div>
+
 ### GUI Interface
 <div align="center">
 
