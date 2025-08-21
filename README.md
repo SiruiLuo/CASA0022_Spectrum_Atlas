@@ -174,8 +174,8 @@ make
 ### Signal Acquisition
 The system can automatically scan multiple frequency bands and generate heatmaps:
 
-#### Room01 Signal Heatmaps (2025-07-09)
-All frequency band heatmaps generated from room01 data collection:
+#### Student Dormitory Signal Heatmaps (2025-07-09)
+All frequency band heatmaps generated from student dorm collection:
 
 **Low Frequency Bands:**
 
