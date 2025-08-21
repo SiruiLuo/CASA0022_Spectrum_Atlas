@@ -74,7 +74,7 @@ Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualiza
 
 ### Algorithm Flow
 
-#### Algorithm 1: Map Construction and Data Acquisition
+#### Fixed-Parameter RBF-Gaussian Heatmap Algorithm (FPRGH) 
 <div align="center">
 
 ![Algorithm 1](Images/Algorithm%201%20flow%20chart%20and%20maps.png)
@@ -83,7 +83,7 @@ Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualiza
 
 </div>
 
-#### Algorithm 2: Heatmap Generation and Visualization
+#### Adaptive RBF Heatmap Algorithm with Spatial Scaling (ARH-SS)
 <div align="center">
 
 ![Algorithm 2](Images/Algorithm%202%20flowchart%20and%20example.png)
