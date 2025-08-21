@@ -240,7 +240,7 @@ All frequency band heatmaps generated from room01 data collection:
 ### Sampling Flowchart
 <div align="center">
 
-![Sampling Flowchart](Images/Sampling%20Flowchart.png)
+<img src="Images/Sampling%20Flowchart.png" width="400" alt="Sampling Flowchart">
 
 **Figure 7: Data Sampling Flowchart**
 
