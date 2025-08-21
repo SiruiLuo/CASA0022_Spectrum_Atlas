@@ -8,7 +8,7 @@ Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualiza
 
 <div align="center">
 
-<img src="Images/Spectrum%20Atlas.jpg" width="400" alt="Spectrum Atlas System">
+<img src="Images/Spectrum%20Atlas.jpg" width="450" alt="Spectrum Atlas System">
 
 **Figure 1: Spectrum Atlas System Overview**
 
