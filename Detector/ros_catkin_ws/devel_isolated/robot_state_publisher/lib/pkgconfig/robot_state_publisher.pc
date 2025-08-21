@@ -1,0 +1,8 @@
+prefix=/home/Steven/ros_catkin_ws/devel_isolated/robot_state_publisher
+
+Name: robot_state_publisher
+Description: Description of robot_state_publisher
+Version: 1.14.1
+Cflags: -I/home/Steven/ros_catkin_ws/src/robot_state_publisher/include -I/opt/ros/melodic/share/orocos_kdl/cmake/../../../include -I/usr/include/eigen3 -I/usr/include
+Libs: -L${prefix}/lib -lrobot_state_publisher_solver -ljoint_state_listener /opt/ros/melodic/lib/liborocos-kdl.so.1.4.0
+Requires: kdl_parser roscpp rosconsole rostime sensor_msgs tf2_ros tf2_kdl

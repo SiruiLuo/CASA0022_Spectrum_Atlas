@@ -1,0 +1,8 @@
+prefix=/home/Steven/ros_catkin_ws/devel_isolated/urdfdom_py
+
+Name: urdfdom_py
+Description: Description of urdfdom_py
+Version: 0.4.6
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,8 @@
+prefix=/home/Steven/ros_catkin_ws/devel_isolated/kdl_parser
+
+Name: kdl_parser
+Description: Description of kdl_parser
+Version: 1.13.3
+Cflags: -I/home/Steven/ros_catkin_ws/src/kdl_parser/kdl_parser/include -I/opt/ros/melodic/share/orocos_kdl/cmake/../../../include -I/usr/include/eigen3 -I/usr/include
+Libs: -L${prefix}/lib -lkdl_parser /opt/ros/melodic/lib/liborocos-kdl.so.1.4.0 /usr/lib/arm-linux-gnueabihf/libtinyxml.so /usr/lib/arm-linux-gnueabihf/libtinyxml2.so
+Requires: rosconsole urdf

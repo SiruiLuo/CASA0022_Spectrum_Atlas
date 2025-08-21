@@ -1,0 +1,8 @@
+prefix=/home/Steven/ros_catkin_ws/devel_isolated/kdl_parser_py
+
+Name: kdl_parser_py
+Description: Description of kdl_parser_py
+Version: 1.13.3
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: urdfdom_py

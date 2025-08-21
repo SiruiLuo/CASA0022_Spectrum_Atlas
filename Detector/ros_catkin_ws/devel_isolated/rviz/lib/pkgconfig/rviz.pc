@@ -1,0 +1,8 @@
+prefix=/home/Steven/ros_catkin_ws/devel_isolated/rviz
+
+Name: rviz
+Description: Description of rviz
+Version: 1.13.30
+Cflags: -I/home/Steven/ros_catkin_ws/devel_isolated/rviz/include -I/home/Steven/ros_catkin_ws/src/rviz/src -I/usr/include/eigen3 -I/usr/include/OGRE/Overlay -I/usr/include/OGRE -I/usr/include
+Libs: -L${prefix}/lib -lrviz /usr/lib/arm-linux-gnueabihf/libOgreOverlay.so /usr/lib/arm-linux-gnueabihf/libOgreMain.so /usr/lib/arm-linux-gnueabihf/libpthread.so /usr/lib/arm-linux-gnueabihf/libGL.so /usr/lib/arm-linux-gnueabihf/libGLU.so
+Requires: geometry_msgs image_transport interactive_markers laser_geometry map_msgs message_filters message_runtime nav_msgs pluginlib resource_retriever roscpp roslib sensor_msgs std_msgs std_srvs tf urdf visualization_msgs
