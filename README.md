@@ -346,12 +346,12 @@ The project includes complete 3D printed enclosure design:
 
 </div>
 
-#### Handle Components
+#### Handles & Antenna Connector
 <div align="center">
 
 ![Handles](Images/Handles.png)
 
-**Figure 14: 3D Printed Handle Components**
+**Figure 14: 3D Printed Handles & Antenna Connector**
 
 </div>
 
