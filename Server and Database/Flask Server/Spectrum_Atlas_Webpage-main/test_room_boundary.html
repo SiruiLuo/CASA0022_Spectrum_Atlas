@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>房间边界测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .test-info h3 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #1565c0;
+        }
+        
+        .heatmap-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .heatmap-section {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .heatmap-section h3 {
+            margin-top: 0;
+            color: #1976d2;
+            text-align: center;
+        }
+        
+        #heatmap-3d-container-1, #heatmap-3d-container-2 {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .heatmap-tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .heatmap-tooltip.visible {
+            opacity: 1;
+        }
+        
+        .info-panel {
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .info-panel h3 {
+            margin-top: 0;
+            color: #7b1fa2;
+        }
+        
+        .data-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .data-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #1976d2;
+        }
+        
+        .data-card h4 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="static/heatmap3d.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>房间边界测试 - 基于实际数据</h1>
+        
+        <div class="test-info">
+            <h3>测试说明：</h3>
+            <p>这个测试展示了如何根据实际热力图数据生成房间边界。房间边界会紧贴热力图数据的轮廓，而不是使用固定的尺寸。</p>
+            <ul>
+                <li>✅ 房间边界根据数据尺寸自动调整</li>
+                <li>✅ 边界紧贴热力图轮廓</li>
+                <li>✅ 支持不同尺寸的数据</li>
+                <li>✅ 半透明灰色材质，不影响数据可视化</li>
+            </ul>
+        </div>
+        
+        <div class="controls">
+            <button onclick="testRectangularData()">矩形数据 (20x10)</button>
+            <button onclick="testSquareData()">正方形数据 (15x15)</button>
+            <button onclick="testSmallData()">小尺寸数据 (8x8)</button>
+            <button onclick="testLargeData()">大尺寸数据 (25x20)</button>
+            <button onclick="clearAll()">清除所有</button>
+        </div>
+        
+        <div class="heatmap-container">
+            <div class="heatmap-section">
+                <h3>热力图 1</h3>
+                <div id="heatmap-3d-container-1"></div>
+                <div id="heatmap-tooltip-1" class="heatmap-tooltip"></div>
+            </div>
+            <div class="heatmap-section">
+                <h3>热力图 2</h3>
+                <div id="heatmap-3d-container-2"></div>
+                <div id="heatmap-tooltip-2" class="heatmap-tooltip"></div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>房间边界特性</h3>
+            <div class="data-info">
+                <div class="data-card">
+                    <h4>动态尺寸</h4>
+                    <p>房间边界根据热力图数据的实际尺寸自动计算，确保边界紧贴数据轮廓。</p>
+                </div>
+                <div class="data-card">
+                    <h4>视觉清晰</h4>
+                    <p>使用半透明灰色材质，既能显示房间边界，又不会干扰数据可视化效果。</p>
+                </div>
+                <div class="data-card">
+                    <h4>性能优化</h4>
+                    <p>边界生成与热力图渲染同步，确保性能和视觉效果的一致性。</p>
+                </div>
+                <div class="data-card">
+                    <h4>自适应布局</h4>
+                    <p>支持各种尺寸的数据，从小的8x8到大的25x20都能正确显示边界。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let heatmapRenderer1 = null;
+        let heatmapRenderer2 = null;
+        let currentData1 = null;
+        let currentData2 = null;
+
+        // 初始化渲染器
+        function initRenderers() {
+            if (heatmapRenderer1) {
+                heatmapRenderer1.dispose();
+            }
+            if (heatmapRenderer2) {
+                heatmapRenderer2.dispose();
+            }
+            
+            heatmapRenderer1 = new Heatmap3DRenderer('heatmap-3d-container-1');
+            heatmapRenderer2 = new Heatmap3DRenderer('heatmap-3d-container-2');
+        }
+
+        // 生成矩形数据
+        function testRectangularData() {
+            initRenderers();
+            
+            const data1 = generateTestData(20, 10, "矩形数据A");
+            const data2 = generateTestData(15, 12, "矩形数据B");
+            
+            heatmapRenderer1.renderHeatmap(data1);
+            heatmapRenderer2.renderHeatmap(data2);
+            
+            currentData1 = data1;
+            currentData2 = data2;
+            
+            updateInfo();
+        }
+
+        // 生成正方形数据
+        function testSquareData() {
+            initRenderers();
+            
+            const data1 = generateTestData(15, 15, "正方形数据A");
+            const data2 = generateTestData(12, 12, "正方形数据B");
+            
+            heatmapRenderer1.renderHeatmap(data1);
+            heatmapRenderer2.renderHeatmap(data2);
+            
+            currentData1 = data1;
+            currentData2 = data2;
+            
+            updateInfo();
+        }
+
+        // 生成小尺寸数据
+        function testSmallData() {
+            initRenderers();
+            
+            const data1 = generateTestData(8, 8, "小尺寸数据A");
+            const data2 = generateTestData(6, 10, "小尺寸数据B");
+            
+            heatmapRenderer1.renderHeatmap(data1);
+            heatmapRenderer2.renderHeatmap(data2);
+            
+            currentData1 = data1;
+            currentData2 = data2;
+            
+            updateInfo();
+        }
+
+        // 生成大尺寸数据
+        function testLargeData() {
+            initRenderers();
+            
+            const data1 = generateTestData(25, 20, "大尺寸数据A");
+            const data2 = generateTestData(20, 25, "大尺寸数据B");
+            
+            heatmapRenderer1.renderHeatmap(data1);
+            heatmapRenderer2.renderHeatmap(data2);
+            
+            currentData1 = data1;
+            currentData2 = data2;
+            
+            updateInfo();
+        }
+
+        // 生成测试数据
+        function generateTestData(width, height, name) {
+            const data = {
+                width: width,
+                height: height,
+                data: [],
+                min_rssi: -90,
+                max_rssi: -30,
+                name: name
+            };
+
+            // 生成随机RSSI数据
+            for (let y = 0; y < height; y++) {
+                data.data[y] = [];
+                for (let x = 0; x < width; x++) {
+                    // 创建一些有规律的信号强度模式
+                    const centerX = width / 2;
+                    const centerY = height / 2;
+                    const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+                    const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
+                    
+                    // 基于距离的信号强度衰减
+                    const signalStrength = -30 - (distance / maxDistance) * 60;
+                    const noise = (Math.random() - 0.5) * 10;
+                    
+                    data.data[y][x] = signalStrength + noise;
+                }
+            }
+
+            return data;
+        }
+
+        // 清除所有
+        function clearAll() {
+            if (heatmapRenderer1) {
+                heatmapRenderer1.dispose();
+                heatmapRenderer1 = null;
+            }
+            if (heatmapRenderer2) {
+                heatmapRenderer2.dispose();
+                heatmapRenderer2 = null;
+            }
+            
+            document.getElementById('heatmap-3d-container-1').innerHTML = '';
+            document.getElementById('heatmap-3d-container-2').innerHTML = '';
+            
+            currentData1 = null;
+            currentData2 = null;
+            
+            updateInfo();
+        }
+
+        // 更新信息
+        function updateInfo() {
+            const infoPanel = document.querySelector('.info-panel');
+            const dataInfo = infoPanel.querySelector('.data-info');
+            
+            if (currentData1 && currentData2) {
+                dataInfo.innerHTML = `
+                    <div class="data-card">
+                        <h4>热力图 1: ${currentData1.name}</h4>
+                        <p>尺寸: ${currentData1.width} x ${currentData1.height}</p>
+                        <p>房间尺寸: ${(currentData1.width * 10 / currentData1.width).toFixed(1)} x ${(currentData1.height * 10 / currentData1.height).toFixed(1)} 米</p>
+                    </div>
+                    <div class="data-card">
+                        <h4>热力图 2: ${currentData2.name}</h4>
+                        <p>尺寸: ${currentData2.width} x ${currentData2.height}</p>
+                        <p>房间尺寸: ${(currentData2.width * 10 / currentData2.width).toFixed(1)} x ${(currentData2.height * 10 / currentData2.height).toFixed(1)} 米</p>
+                    </div>
+                    <div class="data-card">
+                        <h4>边界特性</h4>
+                        <p>房间边界根据数据尺寸自动调整，确保边界紧贴数据轮廓。</p>
+                    </div>
+                    <div class="data-card">
+                        <h4>视觉效果</h4>
+                        <p>半透明灰色材质，清晰显示房间边界而不干扰数据可视化。</p>
+                    </div>
+                `;
+            } else {
+                dataInfo.innerHTML = `
+                    <div class="data-card">
+                        <h4>动态尺寸</h4>
+                        <p>房间边界根据热力图数据的实际尺寸自动计算，确保边界紧贴数据轮廓。</p>
+                    </div>
+                    <div class="data-card">
+                        <h4>视觉清晰</h4>
+                        <p>使用半透明灰色材质，既能显示房间边界，又不会干扰数据可视化效果。</p>
+                    </div>
+                    <div class="data-card">
+                        <h4>性能优化</h4>
+                        <p>边界生成与热力图渲染同步，确保性能和视觉效果的一致性。</p>
+                    </div>
+                    <div class="data-card">
+                        <h4>自适应布局</h4>
+                        <p>支持各种尺寸的数据，从小的8x8到大的25x20都能正确显示边界。</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            testRectangularData(); // 默认显示矩形数据
+        });
+    </script>
+</body>
+</html> 

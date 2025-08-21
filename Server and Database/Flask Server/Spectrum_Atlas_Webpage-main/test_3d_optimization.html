@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D热力图优化测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .test-info h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        
+        #heatmap-3d-container {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .heatmap-tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .heatmap-tooltip.visible {
+            opacity: 1;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #1565c0;
+        }
+        
+        .performance-info {
+            background: #f3e5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .performance-info h3 {
+            margin-top: 0;
+            color: #7b1fa2;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="static/heatmap3d.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>3D热力图优化测试</h1>
+        
+        <div class="test-info">
+            <h3>优化内容：</h3>
+            <ul>
+                <li>✅ 添加了基于实际数据的灰色房间边界（紧贴热力图轮廓）</li>
+                <li>✅ 将柱状体组合成单个模型以提高性能</li>
+                <li>✅ 使用InstancedMesh优化大量数据点渲染</li>
+                <li>✅ 添加鼠标移动节流（60fps）提高交互流畅度</li>
+                <li>✅ 优化射线检测，只检测柱状体组合</li>
+            </ul>
+        </div>
+        
+        <div class="controls">
+            <button onclick="generateTestData(50)">生成50个数据点</button>
+            <button onclick="generateTestData(100)">生成100个数据点</button>
+            <button onclick="generateTestData(200)">生成200个数据点</button>
+            <button onclick="generateTestData(500)">生成500个数据点</button>
+            <button onclick="clearHeatmap()">清除热力图</button>
+        </div>
+        
+        <div id="heatmap-3d-container"></div>
+        <div id="heatmap-tooltip"></div>
+        
+        <div class="performance-info">
+            <h3>性能优化说明：</h3>
+            <ul>
+                <li><strong>房间边界：</strong>基于实际热力图数据生成房间边界，紧贴数据轮廓</li>
+                <li><strong>模型组合：</strong>所有柱状体现在组合在一个Group中，减少场景中的对象数量</li>
+                <li><strong>实例化渲染：</strong>对于超过100个数据点，使用InstancedMesh大幅提升渲染性能</li>
+                <li><strong>交互优化：</strong>鼠标移动节流和优化的射线检测，使交互更加流畅</li>
+                <li><strong>内存管理：</strong>更好的对象清理和资源管理</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let heatmapRenderer = null;
+        let performanceData = {
+            renderTime: 0,
+            frameRate: 0,
+            objectCount: 0
+        };
+
+        // 初始化3D热力图渲染器
+        function initHeatmap() {
+            if (heatmapRenderer) {
+                heatmapRenderer.dispose();
+            }
+            heatmapRenderer = new Heatmap3DRenderer('heatmap-3d-container');
+        }
+
+        // 生成测试数据
+        function generateTestData(pointCount) {
+            if (!heatmapRenderer) {
+                initHeatmap();
+            }
+
+            const startTime = performance.now();
+            
+            // 生成随机测试数据
+            const width = Math.ceil(Math.sqrt(pointCount));
+            const height = Math.ceil(Math.sqrt(pointCount));
+            const data = {
+                width: width,
+                height: height,
+                data: [],
+                min_rssi: -90,
+                max_rssi: -30
+            };
+
+            // 生成随机RSSI数据
+            for (let y = 0; y < height; y++) {
+                data.data[y] = [];
+                for (let x = 0; x < width; x++) {
+                    // 创建一些有规律的信号强度模式
+                    const centerX = width / 2;
+                    const centerY = height / 2;
+                    const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+                    const maxDistance = Math.sqrt(centerX ** 2 + centerY ** 2);
+                    
+                    // 基于距离的信号强度衰减
+                    const signalStrength = -30 - (distance / maxDistance) * 60;
+                    const noise = (Math.random() - 0.5) * 10;
+                    
+                    data.data[y][x] = signalStrength + noise;
+                }
+            }
+
+            // 渲染热力图
+            heatmapRenderer.renderHeatmap(data);
+            
+            const endTime = performance.now();
+            performanceData.renderTime = endTime - startTime;
+            performanceData.objectCount = pointCount;
+            
+            updatePerformanceInfo();
+        }
+
+        // 清除热力图
+        function clearHeatmap() {
+            if (heatmapRenderer) {
+                heatmapRenderer.dispose();
+                heatmapRenderer = null;
+            }
+            document.getElementById('heatmap-3d-container').innerHTML = '';
+            performanceData = {
+                renderTime: 0,
+                frameRate: 0,
+                objectCount: 0
+            };
+            updatePerformanceInfo();
+        }
+
+        // 更新性能信息
+        function updatePerformanceInfo() {
+            const infoDiv = document.querySelector('.performance-info');
+            const performanceList = infoDiv.querySelector('ul');
+            
+            performanceList.innerHTML = `
+                <li><strong>渲染时间：</strong>${performanceData.renderTime.toFixed(2)}ms</li>
+                <li><strong>数据点数量：</strong>${performanceData.objectCount}</li>
+                <li><strong>优化状态：</strong>${performanceData.objectCount > 100 ? '使用InstancedMesh' : '使用传统渲染'}</li>
+                <li><strong>房间边界：</strong>已添加灰色半透明墙壁和地板</li>
+                <li><strong>交互优化：</strong>鼠标移动节流已启用（60fps）</li>
+            `;
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            initHeatmap();
+            generateTestData(100); // 默认生成100个数据点
+        });
+    </script>
+</body>
+</html> 

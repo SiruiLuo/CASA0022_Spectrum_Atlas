@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectrum Atlas - Wireless Signal Visualization System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="{{ url_for('static', filename='heatmap3d.js') }}"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-satellite-dish"></i>
+                <span>Spectrum Atlas</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#technology">Technology</a></li>
+                <li><a href="#interactive-heatmaps">Interactive</a></li>
+                <li><a href="#heatmaps">Heatmaps</a></li>
+                <li><a href="#demo">Demo</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Spectrum Atlas</span>
+                </h1>
+                <h2 class="hero-subtitle">Wireless Signal Visualization System</h2>
+                <p class="hero-description">
+                    A comprehensive hardware-software solution for generating 2D heatmaps of wireless signals in spatial environments,
+                    providing complete solutions for spectrum analysis, signal monitoring, and visualization applications.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#heatmaps" class="btn btn-primary">View Heatmaps</a>
+                    <a href="#technology" class="btn btn-secondary">Technology</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="signal-grid">
+                    <div class="signal-point" style="--delay: 0s"></div>
+                    <div class="signal-point" style="--delay: 0.2s"></div>
+                    <div class="signal-point" style="--delay: 0.4s"></div>
+                    <div class="signal-point" style="--delay: 0.6s"></div>
+                    <div class="signal-point" style="--delay: 0.8s"></div>
+                    <div class="signal-point" style="--delay: 1s"></div>
+                    <div class="signal-point" style="--delay: 1.2s"></div>
+                    <div class="signal-point" style="--delay: 1.4s"></div>
+                    <div class="signal-point" style="--delay: 1.6s"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">Project Overview</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>🛰️ Project Objective</h3>
+                    <p>
+                        Generate 2D heatmaps of various wireless signals within a spatial environment and utilize the results for subsequent visualization
+                        (such as Grafana dashboards, augmented reality applications, etc.).
+                    </p>
+                    
+                    <h3>💡 Core Capabilities</h3>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Spectrum Sampling: Multi-band signal automatic scanning</li>
+                        <li><i class="fas fa-check"></i> Spatial Positioning: Each point with 2D coordinates</li>
+                        <li><i class="fas fa-check"></i> Data Storage: PostgreSQL persistent storage</li>
+                        <li><i class="fas fa-check"></i> Heatmap Generation: RBF interpolation + Gaussian filtering + visualization</li>
+                        <li><i class="fas fa-check"></i> Batch Processing: Full frequency band batch output</li>
+                        <li><i class="fas fa-check"></i> Cross-device Collaboration: Raspberry Pi generation → Local download viewing</li>
+                    </ul>
+                </div>
+                <div class="about-visual">
+                    <div class="tech-stack">
+                        <div class="tech-item">
+                            <i class="fas fa-microchip"></i>
+                            <span>Raspberry Pi 4B</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-broadcast-tower"></i>
+                            <span>RTL-SDR</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-radar"></i>
+                            <span>LiDAR</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-database"></i>
+                            <span>PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology" class="technology">
+        <div class="container">
+            <h2 class="section-title">Technical Architecture</h2>
+            
+            <!-- Project Structure Overview -->
+            <div class="project-structure">
+                <h3 class="subsection-title">Project Structure</h3>
+                <p class="subsection-description">
+                    The Spectrum Atlas system is organized into a comprehensive architecture that integrates hardware components, 
+                    software modules, and data processing pipelines to deliver accurate wireless signal heatmap visualizations.
+                </p>
+                <div class="structure-image">
+                    <img src="{{ url_for('pics', filename='Project Structure.png') }}" alt="Spectrum Atlas Project Structure" class="structure-img">
+                </div>
+            </div>
+            
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <h3>Hardware Platform</h3>
+                    <ul>
+                        <li>Raspberry Pi 4B: Main control device</li>
+                        <li>RTL-SDR USB receiver: Signal acquisition</li>
+                        <li>LiDAR (LD19): 2D plane mapping</li>
+                        <li>Positioning module: Spatial location acquisition</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Data Acquisition & Storage</h3>
+                    <ul>
+                        <li>RTL-SDR + Python sampling</li>
+                        <li>Multi-band signal strength acquisition</li>
+                        <li>PostgreSQL data persistence</li>
+                        <li>Support for multiple sessions and signal types</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-map"></i>
+                    </div>
+                    <h3>Map Generation</h3>
+                    <ul>
+                        <li>Hector SLAM algorithm</li>
+                        <li>LiDAR map construction</li>
+                        <li>.pgm + .yaml format output</li>
+                        <li>Coordinate transformation and background mapping</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-chart-area"></i>
+                    </div>
+                    <h3>Heatmap Generation</h3>
+                    <ul>
+                        <li>RBF interpolation algorithm</li>
+                        <li>Gaussian filtering for smoothing</li>
+                        <li>matplotlib visualization</li>
+                        <li>Mask processing and area restrictions</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Batch Processing System</h3>
+                    <ul>
+                        <li>Batch signal type processing</li>
+                        <li>Automated heatmap generation</li>
+                        <li>Filename normalization</li>
+                        <li>Cross-device file transfer</li>
+                    </ul>
+                </div>
+                
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>Image Download & Post-processing</h3>
+                    <ul>
+                        <li>SCP batch download</li>
+                        <li>Grafana dashboard integration</li>
+                        <li>Web interface display</li>
+                        <li>AR display support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Heatmaps Section -->
+    <section id="interactive-heatmaps" class="interactive-heatmaps">
+        <div class="container">
+            <h2 class="section-title">Interactive Signal Heatmaps</h2>
+            <p class="section-description">
+                Explore real-time wireless signal data with our interactive heatmap visualization. 
+                Select a signal type and session to view dynamic heatmaps with hover information.
+            </p>
+            
+            <div class="interactive-controls">
+                <div class="control-group">
+                    <label for="signal-type-select">Signal Type:</label>
+                    <select id="signal-type-select" class="form-select">
+                        <option value="">Select a signal type...</option>
+                        {% for band_name, freq_min, freq_max in bands %}
+                        <option value="{{ band_name }}">{{ band_name }} ({{ freq_min }}-{{ freq_max }} MHz)</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="session-select">Session:</label>
+                    <select id="session-select" class="form-select">
+                        <option value="">Select a session...</option>
+                    </select>
+                </div>
+                
+                <button id="generate-heatmap-btn" class="btn btn-primary" disabled>
+                    <i class="fas fa-chart-area"></i>
+                    Generate Heatmap
+                </button>
+            </div>
+            
+            <div class="interactive-heatmap-container">
+                <div id="heatmap-canvas-container">
+                    <div id="heatmap-3d-container"></div>
+                    <div id="heatmap-tooltip" class="heatmap-tooltip"></div>
+                    <!-- Top-view icon button INSIDE canvas container -->
+                    <button id="top-view-btn" class="top-view-btn" title="Top View">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <div class="heatmap-info-panel">
+                    <div class="info-item">
+                        <span class="info-label">Signal Type:</span>
+                        <span id="current-signal-type">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Session:</span>
+                        <span id="current-session">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Min RSSI:</span>
+                        <span id="min-rssi">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Max RSSI:</span>
+                        <span id="max-rssi">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Min Speed:</span>
+                        <span id="min-speed">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Max Speed:</span>
+                        <span id="max-speed">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Data Points:</span>
+                        <span id="data-points">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Static Heatmaps Section -->
+    <section id="heatmaps" class="heatmaps">
+        <div class="container">
+            <h2 class="section-title">Static Signal Heatmaps</h2>
+            <p class="section-description">
+                Explore the comprehensive collection of wireless signal heatmaps generated by our system, 
+                covering various frequency bands and signal types in different spatial environments.
+                <strong>Click on any heatmap to view it in full size.</strong>
+            </p>
+            
+            <div class="heatmap-gallery">
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='adsb_1090.png') }}" data-title="ADS-B 1090 MHz" data-description="Aircraft transponder signals for air traffic control">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='adsb_1090.png') }}" alt="ADS-B 1090 MHz Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>ADS-B 1090 MHz</h3>
+                        <p>Aircraft transponder signals for air traffic control</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='ais_marine.png') }}" data-title="AIS Marine" data-description="Maritime vessel tracking and navigation signals">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='ais_marine.png') }}" alt="AIS Marine Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>AIS Marine</h3>
+                        <p>Maritime vessel tracking and navigation signals</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='airband_am.png') }}" data-title="Airband (AM)" data-description="Aircraft communication frequencies">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='airband_am.png') }}" alt="Airband AM Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>Airband (AM)</h3>
+                        <p>Aircraft communication frequencies</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='fm_radio.png') }}" data-title="FM Radio" data-description="Broadcast radio frequency signals">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='fm_radio.png') }}" alt="FM Radio Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>FM Radio</h3>
+                        <p>Broadcast radio frequency signals</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='gsm_900_dl.png') }}" data-title="GSM 900 DL" data-description="GSM downlink signals at 900 MHz">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='gsm_900_dl.png') }}" alt="GSM 900 DL Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>GSM 900 DL</h3>
+                        <p>GSM downlink signals at 900 MHz</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='gsm_900_ul.png') }}" data-title="GSM 900 UL" data-description="GSM uplink signals at 900 MHz">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='gsm_900_ul.png') }}" alt="GSM 900 UL Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>GSM 900 UL</h3>
+                        <p>GSM uplink signals at 900 MHz</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='ism_868.png') }}" data-title="ISM 868 MHz" data-description="Industrial, Scientific, and Medical band">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='ism_868.png') }}" alt="ISM 868 Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>ISM 868 MHz</h3>
+                        <p>Industrial, Scientific, and Medical band</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='lora_433.png') }}" data-title="LoRa ISM 433 MHz" data-description="Low-power wide-area network signals">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='lora_433.png') }}" alt="LoRa ISM 433 Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>LoRa ISM 433 MHz</h3>
+                        <p>Low-power wide-area network signals</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='lte_1800.png') }}" data-title="LTE 1800 MHz" data-description="4G mobile network signals">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='lte_1800.png') }}" alt="LTE 1800 Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>LTE 1800 MHz</h3>
+                        <p>4G mobile network signals</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='rc_aircraft.png') }}" data-title="RC Aircraft" data-description="Radio-controlled aircraft frequencies">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='rc_aircraft.png') }}" alt="RC Aircraft Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>RC Aircraft</h3>
+                        <p>Radio-controlled aircraft frequencies</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='rc_ground.png') }}" data-title="RC Ground" data-description="Ground-based radio control signals">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='rc_ground.png') }}" alt="RC Ground Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>RC Ground</h3>
+                        <p>Ground-based radio control signals</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='rc_low_band.png') }}" data-title="RC Low Band" data-description="Low-frequency radio control signals">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='rc_low_band.png') }}" alt="RC Low Band Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>RC Low Band</h3>
+                        <p>Low-frequency radio control signals</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item" data-heatmap="{{ url_for('pics', filename='tetra_emergency.png') }}" data-title="TETRA Emergency" data-description="Terrestrial Trunked Radio emergency communications">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='tetra_emergency.png') }}" alt="TETRA Emergency Heatmap">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>TETRA Emergency</h3>
+                        <p>Terrestrial Trunked Radio emergency communications</p>
+                    </div>
+                </div>
+                
+                <div class="heatmap-item featured" data-heatmap="{{ url_for('pics', filename='heat3D.png') }}" data-title="3D Heatmap Visualization" data-description="Advanced three-dimensional signal strength representation">
+                    <div class="heatmap-image">
+                        <img src="{{ url_for('pics', filename='heat3D.png') }}" alt="3D Heatmap Visualization">
+                        <div class="heatmap-overlay">
+                            <i class="fas fa-expand"></i>
+                        </div>
+                    </div>
+                    <div class="heatmap-info">
+                        <h3>3D Heatmap Visualization</h3>
+                        <p>Advanced three-dimensional signal strength representation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="demo">
+        <div class="container">
+            <h2 class="section-title">System Demo</h2>
+            <div class="demo-content">
+                <div class="demo-visual">
+                    <div class="heatmap-container">
+                        <div class="heatmap-grid">
+                            <!-- Dynamically generated heatmap grid -->
+                        </div>
+                        <div class="signal-overlay">
+                            <div class="signal-wave"></div>
+                            <div class="signal-wave"></div>
+                            <div class="signal-wave"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-info">
+                    <h3>Real-time Signal Monitoring</h3>
+                    <p>The system can collect and visualize wireless signal strength in real-time across different frequency bands, generating precise heatmap distributions.</p>
+                    
+                    <!-- 实时状态指示器 -->
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span class="status-text">System Active</span>
+                    </div>
+                    
+                    <div class="demo-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">99.9%</span>
+                            <span class="stat-label">Data Accuracy</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">13+</span>
+                            <span class="stat-label">Frequency Bands</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">Real-time</span>
+                            <span class="stat-label">Processing Speed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Project Information</h3>
+                    <p>Spectrum Atlas is a comprehensive wireless signal heatmap generation and visualization system that integrates hardware and software technologies to provide professional solutions for spectrum analysis.</p>
+                    <div class="contact-links">
+                        <a href="#" class="contact-link">
+                            <i class="fab fa-github"></i>
+                            <span>GitHub Repository</span>
+                        </a>
+                        <a href="#" class="contact-link">
+                            <i class="fas fa-envelope"></i>
+                            <span>Contact Email</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>Send Message</h3>
+                    <form>
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Message Content" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-satellite-dish"></i>
+                    <span>Spectrum Atlas</span>
+                </div>
+                <p>&copy; 2024 Spectrum Atlas. Wireless Signal Visualization System</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal for enlarged heatmap -->
+    <div id="heatmapModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="">
+                <p id="modalDescription"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 
