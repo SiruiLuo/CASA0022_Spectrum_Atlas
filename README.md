@@ -10,7 +10,7 @@ Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualiza
 
 <img src="Images/Spectrum%20Atlas.jpg" width="550" alt="Spectrum Atlas System">
 
-**Figure 1: Spectrum Atlas Device Overview**
+**Figure 1: Spectrum Atlas System Overview**
 
 </div>
 
@@ -35,10 +35,10 @@ Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualiza
 ## 🏗️ System Architecture
 
 ### Hardware Platform
-- **Raspberry Pi 4B**: Main control device responsible for running ROS, signal scanning, data storage, and image rendering
-- **RTL-SDR USB Receiver**: For acquiring signal strength (RSSI) at different frequency bands
-- **LiDAR (LD19)**: For 2D plane mapping construction
-- **Positioning Module**: Coordinates with LiDAR to obtain spatial location of each sampling point
+- **Raspberry Pi 4 Model B**: Main control device responsible for running ROS, signal scanning, data storage, and image rendering
+- **FHL-LD19 LiDAR**: For obtaining spatial shape and distance information, generating spatial maps, and 2D plane mapping construction
+- **RTL-SDR Blog V4**: For acquiring signal strength (RSSI) at different frequency bands from 1 MHz to 1.78 GHz
+- **Waveshare 5-inch Touch Display**: For graphical user interface display and user interaction
 
 <div align="center">
 
@@ -346,12 +346,12 @@ The project includes complete 3D printed enclosure design:
 
 </div>
 
-#### Handles & Antenna Connector
+#### Handle Components
 <div align="center">
 
 ![Handles](Images/Handles.png)
 
-**Figure 14: 3D Printed Handles & Antenna Connector**
+**Figure 14: 3D Printed Handle Components**
 
 </div>
 
