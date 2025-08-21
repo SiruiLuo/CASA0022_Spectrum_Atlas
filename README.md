@@ -4,9 +4,22 @@
 
 ## 📖 Project Overview
 
-Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualization system that integrates hardware and software technologies to generate 2D heatmaps of wireless signals in spatial environments, providing professional solutions for spectrum analysis, signal monitoring, and visualization applications.
+Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualization system that integrates hardware and software technologies to generate 2D and 3D heatmaps of wireless signals in spatial environments, providing professional solutions for spectrum analysis, signal monitoring, and visualization applications.
+
+<div align="center">
 
 ![Spectrum Atlas System](Images/Spectrum%20Atlas.jpg)
+
+**Figure 1: Spectrum Atlas System Overview**
+
+</div>
+
+### 🎥 Official Demo Video
+<div align="center">
+
+[![Spectrum Atlas Demo](https://img.shields.io/badge/YouTube-Watch%20Demo%20Video-red?style=for-the-badge&logo=youtube)](https://youtu.be/9fO_MTytgyk)
+
+</div>
 
 ## ✨ Core Features
 
@@ -27,7 +40,13 @@ Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualiza
 - **LiDAR (LD19)**: For 2D plane mapping construction
 - **Positioning Module**: Coordinates with LiDAR to obtain spatial location of each sampling point
 
+<div align="center">
+
 ![System Structure](Images/System%20Structure.png)
+
+**Figure 2: System Architecture Structure**
+
+</div>
 
 ### Software Architecture
 - **ROS (Robot Operating System)**: Robot operating system for hardware control and data management
@@ -56,10 +75,22 @@ Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualiza
 ### Algorithm Flow
 
 #### Algorithm 1: Map Construction and Data Acquisition
+<div align="center">
+
 ![Algorithm 1](Images/Algorithm%201%20flow%20chart%20and%20maps.png)
 
+**Figure 3: FPRGH heaptmap generation flowchart and example**
+
+</div>
+
 #### Algorithm 2: Heatmap Generation and Visualization
+<div align="center">
+
 ![Algorithm 2](Images/Algorithm%202%20flowchart%20and%20example.png)
+
+**Figure 4: ARH-SS heaptmap generation flowchart and example**
+
+</div>
 
 ## 📁 Project Structure
 
@@ -147,43 +178,79 @@ The system can automatically scan multiple frequency bands and generate heatmaps
 All frequency band heatmaps generated from room01 data collection:
 
 **Low Frequency Bands:**
-![RC Low Band](Images/heatmap_RC_Low_Band_room01_20250709_151402.png) ![RC Aircraft](Images/heatmap_RC_Aircraft_room01_20250709_151402.png) ![RC Ground](Images/heatmap_RC_Ground_room01_20250709_151402.png)
+<img src="Images/heatmap_RC_Low_Band_room01_20250709_151402.png" width="200" alt="RC Low Band"> <img src="Images/heatmap_RC_Aircraft_room01_20250709_151402.png" width="200" alt="RC Aircraft"> <img src="Images/heatmap_RC_Ground_room01_20250709_151402.png" width="200" alt="RC Ground">
 
 **Medium Frequency Bands:**
-![FM Radio](Images/heatmap_FM_Radio_room01_20250709_151402.png) ![Airband AM](Images/heatmap_Airband_(AM)_room01_20250709_151402.png) ![AIS Marine](Images/heatmap_AIS_-_Marine_room01_20250709_151402.png)
+<img src="Images/heatmap_FM_Radio_room01_20250709_151402.png" width="200" alt="FM Radio"> <img src="Images/heatmap_Airband_(AM)_room01_20250709_151402.png" width="200" alt="Airband AM"> <img src="Images/heatmap_AIS_-_Marine_room01_20250709_151402.png" width="200" alt="AIS Marine">
 
 **High Frequency Bands:**
-![GSM 900 UL](Images/heatmap_GSM_900_UL_room01_20250709_151402.png) ![GSM 900 DL](Images/heatmap_GSM_900_DL_room01_20250709_151402.png) ![LoRa ISM 433](Images/heatmap_LoRa_-_ISM_433_room01_20250709_151402.png)
+<img src="Images/heatmap_GSM_900_UL_room01_20250709_151402.png" width="200" alt="GSM 900 UL"> <img src="Images/heatmap_GSM_900_DL_room01_20250709_151402.png" width="200" alt="GSM 900 DL"> <img src="Images/heatmap_LoRa_-_ISM_433_room01_20250709_151402.png" width="200" alt="LoRa ISM 433">
 
 **Ultra High Frequency Bands:**
-![ISM 868](Images/heatmap_ISM_868_room01_20250709_151402.png) ![ADS-B 1090](Images/heatmap_ADS-B_1090_room01_20250709_151402.png) ![LTE 1800](Images/heatmap_LTE_1800_room01_20250709_151402.png)
+<img src="Images/heatmap_ISM_868_room01_20250709_151402.png" width="200" alt="ISM 868"> <img src="Images/heatmap_ADS-B_1090_room01_20250709_151402.png" width="200" alt="ADS-B 1090"> <img src="Images/heatmap_LTE_1800_room01_20250709_151402.png" width="200" alt="LTE 1800">
 
 **Emergency & Special Bands:**
-![TETRA Emergency](Images/heatmap_TETRA_-_Emergency_room01_20250709_151402.png)
+<img src="Images/heatmap_TETRA_-_Emergency_room01_20250709_151402.png" width="200" alt="TETRA Emergency">
 
 ### GUI Interface
+<div align="center">
+
 ![GUI and Map](Images/GUI%20and%20Map.png)
 
+**Figure 5: GUI Interface and Map Display**
+
+</div>
+
 ### System Deployment
+<div align="center">
+
 ![Deployment in Exhibition](Images/Deployment%20in%20exhibition.png)
+
+**Figure 6: System Deployment in Exhibition**
+
+</div>
 
 ## 🔍 Data Acquisition Process
 
 ### Sampling Flowchart
+<div align="center">
+
 ![Sampling Flowchart](Images/Sampling%20Flowchart.png)
 
+**Figure 7: Data Sampling Flowchart**
+
+</div>
+
 ### Data Acquisition Commands and Data
+<div align="center">
+
 ![Data Acquisition](Images/Data%20acquisition%20command%20and%20data.png)
+
+**Figure 8: Data Acquisition Commands and Data**
+
+</div>
 
 ## 🗺️ Map Generation
 
 ### Hector SLAM
 Uses LiDAR for environmental map construction:
 
+<div align="center">
+
 ![Hector SLAM](Images/Hector%20SLAM.png)
 
+**Figure 9: Hector SLAM Mapping**
+
+</div>
+
 ### Rviz Example
+<div align="center">
+
 ![Rviz Example](Images/Rviz%20Example.png)
+
+**Figure 10: Rviz Visualization Example**
+
+</div>
 
 ## 💻 Web Application Features
 
@@ -195,7 +262,13 @@ Uses LiDAR for environmental map construction:
 - **Professional UI**: Modern, clean interface with consistent styling
 
 ### Flask Loading Interface
+<div align="center">
+
 ![Flask Loading](Images/Flask%20loading.png)
+
+**Figure 11: Flask Web Application Loading Interface**
+
+</div>
 
 ## 🔧 Hardware Components
 
@@ -210,13 +283,31 @@ Uses LiDAR for environmental map construction:
 The project includes complete 3D printed enclosure design:
 
 #### Main Box
+<div align="center">
+
 ![Box](Images/Box.png)
 
+**Figure 12: 3D Printed Main Box**
+
+</div>
+
 #### Lid Cover
+<div align="center">
+
 ![Lid](Images/Lid.png)
 
+**Figure 13: 3D Printed Lid Cover**
+
+</div>
+
 #### Handle Components
+<div align="center">
+
 ![Handles](Images/Handles.png)
+
+**Figure 14: 3D Printed Handle Components**
+
+</div>
 
 ## 📈 Performance Metrics
 
