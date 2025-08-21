@@ -222,7 +222,7 @@ All frequency band heatmaps generated from room01 data collection:
 
 ![GUI and Map](Images/GUI%20and%20Map.png)
 
-**Figure 5: GUI Interface and Map Display**
+**Figure 5: GUI Interface and Hector SLAM Map Display**
 
 </div>
 
@@ -257,14 +257,14 @@ All frequency band heatmaps generated from room01 data collection:
 
 ## 🗺️ Map Generation
 
-### Hector SLAM
-Uses LiDAR for environmental map construction:
+### Hector SLAM Topics
+LiDAR topics available in Hector SLAM:
 
 <div align="center">
 
 ![Hector SLAM](Images/Hector%20SLAM.png)
 
-**Figure 9: Hector SLAM Mapping**
+**Figure 9: Hector SLAM Topics**
 
 </div>
 
@@ -286,12 +286,12 @@ Uses LiDAR for environmental map construction:
 - **Responsive Design**: Optimized for desktop and mobile devices
 - **Professional UI**: Modern, clean interface with consistent styling
 
-### Flask Loading Interface
+### Flask Interface
 <div align="center">
 
-![Flask Loading](Images/Flask%20loading.png)
+![Spectrum Atlas Official Website](Images/Spectrum%20Atlas%20Official%20Website.png)
 
-**Figure 11: Flask Web Application Loading Interface**
+**Figure 11: Spectrum Atlas Official Website**
 
 </div>
 
