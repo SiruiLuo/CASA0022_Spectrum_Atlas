@@ -178,19 +178,44 @@ The system can automatically scan multiple frequency bands and generate heatmaps
 All frequency band heatmaps generated from room01 data collection:
 
 **Low Frequency Bands:**
+
+<div align="center">
+
 <img src="Images/heatmap_RC_Low_Band_room01_20250709_151402.png" width="200" alt="RC Low Band"> <img src="Images/heatmap_RC_Aircraft_room01_20250709_151402.png" width="200" alt="RC Aircraft"> <img src="Images/heatmap_RC_Ground_room01_20250709_151402.png" width="200" alt="RC Ground">
 
+</div>
+
 **Medium Frequency Bands:**
+
+<div align="center">
+
 <img src="Images/heatmap_FM_Radio_room01_20250709_151402.png" width="200" alt="FM Radio"> <img src="Images/heatmap_Airband_(AM)_room01_20250709_151402.png" width="200" alt="Airband AM"> <img src="Images/heatmap_AIS_-_Marine_room01_20250709_151402.png" width="200" alt="AIS Marine">
 
+</div>
+
 **High Frequency Bands:**
+
+<div align="center">
+
 <img src="Images/heatmap_GSM_900_UL_room01_20250709_151402.png" width="200" alt="GSM 900 UL"> <img src="Images/heatmap_GSM_900_DL_room01_20250709_151402.png" width="200" alt="GSM 900 DL"> <img src="Images/heatmap_LoRa_-_ISM_433_room01_20250709_151402.png" width="200" alt="LoRa ISM 433">
 
+</div>
+
 **Ultra High Frequency Bands:**
+
+<div align="center">
+
 <img src="Images/heatmap_ISM_868_room01_20250709_151402.png" width="200" alt="ISM 868"> <img src="Images/heatmap_ADS-B_1090_room01_20250709_151402.png" width="200" alt="ADS-B 1090"> <img src="Images/heatmap_LTE_1800_room01_20250709_151402.png" width="200" alt="LTE 1800">
 
+</div>
+
 **Emergency & Special Bands:**
+
+<div align="center">
+
 <img src="Images/heatmap_TETRA_-_Emergency_room01_20250709_151402.png" width="200" alt="TETRA Emergency">
+
+</div>
 
 ### GUI Interface
 <div align="center">
