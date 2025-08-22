@@ -304,7 +304,6 @@ LiDAR topics available in Hector SLAM:
 - **Real-time Data Loading**: Connects to PostgreSQL database for live signal data
 - **Interactive Controls**: Dynamically select signal types and sessions
 - **Hover Information**: Display signal strength and position coordinates on mouse hover
-- **Responsive Design**: Optimized for desktop and mobile devices
 - **Professional UI**: Modern, clean interface with consistent styling
 
 ### Flask Interface
