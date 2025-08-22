@@ -55,6 +55,15 @@ Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualiza
 - **PostgreSQL**: Relational database for signal data storage
 - **LiDAR SLAM**: Uses Hector SLAM for environmental map construction
 
+### Circuit Diagram
+<div align="center">
+
+<img src="Images/Circuit%20Diagram.png" width="550" alt="Circuit Diagram">
+
+**Figure 3: System Circuit Diagram**
+
+</div>
+
 ## 🔧 Technical Features
 
 ### Supported Signal Types
@@ -79,7 +88,7 @@ Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualiza
 
 ![Algorithm 1](Images/Algorithm%201%20flow%20chart%20and%20maps.png)
 
-**Figure 3: FPRGH heaptmap generation flowchart and example**
+**Figure 4: Algorithm 1 - Map Construction and Data Acquisition**
 
 </div>
 
@@ -88,7 +97,7 @@ Spectrum Atlas is a comprehensive wireless signal spectrum mapping and visualiza
 
 ![Algorithm 2](Images/Algorithm%202%20flowchart%20and%20example.png)
 
-**Figure 4: ARH-SS heaptmap generation flowchart and example**
+**Figure 5: Algorithm 2 - Heatmap Generation and Visualization**
 
 </div>
 
@@ -224,7 +233,7 @@ All frequency band heatmaps generated from student dorm collection:
 
 <img src="Images/BLE%20Dashboard.png" width="400" alt="BLE Dashboard">
 
-**Figure 15: BLE Signal Analysis Dashboard**
+**Figure 16: BLE Signal Analysis Dashboard**
 
 </div>
 
@@ -234,7 +243,7 @@ All frequency band heatmaps generated from student dorm collection:
 
 <img src="Images/BLE%20RSSI%20total%20variation.png" width="400" alt="BLE RSSI Variation"> <img src="Images/BLE%20AVG%20Change.png" width="400" alt="BLE Average Change">
 
-**Figure 16: BLE RSSI Total Variation and Average Change Analysis**
+**Figure 17: BLE RSSI Total Variation and Average Change Analysis**
 
 </div>
 
@@ -243,7 +252,7 @@ All frequency band heatmaps generated from student dorm collection:
 
 ![GUI and Map](Images/GUI%20and%20Map.png)
 
-**Figure 5: GUI Interface and Hector SLAM Map Display**
+**Figure 6: GUI Interface and Map Display**
 
 </div>
 
@@ -252,7 +261,7 @@ All frequency band heatmaps generated from student dorm collection:
 
 ![Deployment in Exhibition](Images/Deployment%20in%20exhibition.png)
 
-**Figure 6: System Deployment in Exhibition**
+**Figure 7: System Deployment in Exhibition**
 
 </div>
 
@@ -263,7 +272,7 @@ All frequency band heatmaps generated from student dorm collection:
 
 <img src="Images/Sampling%20Flowchart.png" width="400" alt="Sampling Flowchart">
 
-**Figure 7: Data Sampling Flowchart**
+**Figure 8: Data Sampling Flowchart**
 
 </div>
 
@@ -272,7 +281,7 @@ All frequency band heatmaps generated from student dorm collection:
 
 ![Data Acquisition](Images/Data%20acquisition%20command%20and%20data.png)
 
-**Figure 8: Data Acquisition Commands and Data**
+**Figure 9: Data Acquisition Commands and Data**
 
 </div>
 
@@ -285,7 +294,7 @@ LiDAR topics available in Hector SLAM:
 
 ![Hector SLAM](Images/Hector%20SLAM.png)
 
-**Figure 9: Hector SLAM Topics**
+**Figure 10: Hector SLAM Mapping**
 
 </div>
 
@@ -294,7 +303,7 @@ LiDAR topics available in Hector SLAM:
 
 ![Rviz Example](Images/Rviz%20Example.png)
 
-**Figure 10: Rviz Visualization Example**
+**Figure 11: Rviz Visualization Example**
 
 </div>
 
@@ -311,7 +320,7 @@ LiDAR topics available in Hector SLAM:
 
 ![Spectrum Atlas Official Website](Images/Spectrum%20Atlas%20Official%20Website.png)
 
-**Figure 11: Spectrum Atlas Official Website**
+**Figure 12: Spectrum Atlas Official Website**
 
 </div>
 
@@ -332,7 +341,7 @@ The project includes complete 3D printed enclosure design:
 
 ![Box](Images/Box.png)
 
-**Figure 12: 3D Printed Main Box**
+**Figure 13: 3D Printed Main Box**
 
 </div>
 
@@ -341,7 +350,7 @@ The project includes complete 3D printed enclosure design:
 
 ![Lid](Images/Lid.png)
 
-**Figure 13: 3D Printed Lid Cover**
+**Figure 14: 3D Printed Lid Cover**
 
 </div>
 
@@ -350,7 +359,7 @@ The project includes complete 3D printed enclosure design:
 
 ![Handles](Images/Handles.png)
 
-**Figure 14: 3D Printed Handle Components**
+**Figure 15: 3D Printed Handle Components**
 
 </div>
 
