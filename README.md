@@ -1,4 +1,4 @@
-# 🌐 Spectrum Atlas - Wireless Signal Spectrum Mapping System
+# 🌐 Spectrum Atlas - A Wireless Signal Detection & Visualization System
 
 ![Spectrum Atlas](https://img.shields.io/badge/Spectrum-Atlas-black?style=for-the-badge&logo=github) ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg) ![C++](https://img.shields.io/badge/C++-17-blue.svg) ![ROS](https://img.shields.io/badge/ROS-Melodic-orange.svg) ![Qt](https://img.shields.io/badge/Qt-5.12+-green.svg)
 
